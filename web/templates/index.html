@@ -9,15 +9,20 @@
     <p id="distance-value"><em>loading…</em></p>
 
     <script>
-    // server‑sent events version for real‑time updates
+    // server‑sent events stream – payload is "<distance>,<step_flag>"
     const es = new EventSource('/stream');
     es.onmessage = function(e) {
         const el = document.getElementById('distance-value');
         if (e.data === "null") {
             el.innerHTML = '<em>No data available yet.</em>';
-        } else {
-            el.textContent = 'Current distance: ' + e.data + ' cm';
+            return;
         }
+        const parts = e.data.split(',');
+        const dist = parts[0];
+        const step = parts.length > 1 && parts[1] === '1';
+        let text = 'Current distance: ' + dist + ' cm';
+        if (step) text += ' (step detected)';
+        el.textContent = text;
     };
     es.onerror = function() {
         console.error('eventsource error');

@@ -13,22 +13,29 @@ MQTT_TOPIC = "sensor/distance"
 
 # store the most recent reading
 latest_distance = None
+# whether the most recent value counts as a step
+step_detected = False
 
 # simple list of queues for server‑sent events subscribers
 _sse_subscribers = []
+
+# threshold (deadband) around zero in centimeters
+DEAD_BAND = 4.0  # adjust to taste, distance <= this is treated as a step
 
 # MQTT callbacks
 def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
-    global latest_distance
+    global latest_distance, step_detected
     try:
         latest_distance = float(msg.payload.decode())
-        # notify any active SSE clients
-        text = str(latest_distance)
+        # decide whether this qualifies as a step
+        step_detected = abs(latest_distance) <= DEAD_BAND
+        # notify any active SSE clients with both values
+        payload = f"{latest_distance},{int(step_detected)}"
         for q in list(_sse_subscribers):
-            q.put(text)
+            q.put(payload)
     except ValueError:
         pass
 
@@ -46,8 +53,8 @@ def index():
 
 @app.route('/distance')
 def get_distance():
-    """Return the most recent reading as JSON."""
-    return {"distance": latest_distance}
+    """Return the most recent reading and step flag as JSON."""
+    return {"distance": latest_distance, "step": step_detected}
 
 
 @app.route('/stream')
