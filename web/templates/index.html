@@ -54,10 +54,6 @@ body.finish-mode { background:#0a0a0a; }
 .finish-stat  { background:rgba(255,255,255,.07); border:2px solid rgba(255,255,255,.15); border-radius:14px; padding:12px 20px; text-align:center; }
 .finish-stat-val { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:white; }
 .finish-stat-lbl { font-size:.55rem; font-weight:900; letter-spacing:.12em; color:rgba(255,255,255,.4); }
-.finish-close { margin-top:10px; font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:.1em; background:#ffe44d; color:#111; border:none; border-radius:100px; padding:10px 30px; cursor:pointer; box-shadow:0 5px 0 rgba(255,180,0,.5); }
-
-
-
 .spec-page { position:relative; z-index:1; height:100%; display:flex; flex-direction:column; padding:12px 14px 70px; gap:7px; overflow:hidden; }
 
 /* HEADER */
@@ -104,10 +100,17 @@ body.finish-mode { background:#0a0a0a; }
 
 /* TRACKS */
 .sp-all-tracks { display:flex; flex-direction:column; gap:6px; flex:1; min-height:0; overflow:hidden; }
-.sp-track-card { border:3px solid var(--black); border-radius:16px; overflow:hidden; box-shadow:var(--shadow-deep); flex:1; display:flex; flex-direction:column; min-height:0; }
-.sp-track-top { padding:6px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; color:white; }
-.sp-track-name { font-family:'Bebas Neue',sans-serif; font-size:1.15rem; letter-spacing:.08em; }
+.sp-track-card { border:3px solid var(--black); border-radius:16px; overflow:hidden; box-shadow:var(--shadow-deep); flex:1; display:flex; flex-direction:column; min-height:0; transition:flex .3s cubic-bezier(.34,1.2,.64,1); }
+.sp-track-top { padding:4px 10px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; color:white; }
+.sp-track-name { font-family:'Bebas Neue',sans-serif; font-size:.95rem; letter-spacing:.08em; }
 .sp-gap-chip   { font-size:.6rem; font-weight:900; letter-spacing:.1em; padding:3px 9px; border-radius:100px; }
+
+.sp-track-card.collapsed { flex:0 0 44px !important; }
+.sp-track-card.collapsed .sp-scene { display:none; }
+.sp-track-card.collapsed .sp-track-top { border-radius:13px; }
+.btn-collapse { background:none; border:none; cursor:pointer; font-size:1rem; color:rgba(255,255,255,.7); padding:0 2px; line-height:1; transition:transform .2s; flex-shrink:0; }
+.sp-track-card.collapsed .btn-collapse { transform:rotate(-90deg); }
+
 .tc-you .sp-track-top { background:#111; }
 .tc-you .sp-scene     { background:#0d1117; }
 .tc-you .sp-rfill     { background:linear-gradient(90deg,rgba(255,228,0,.15),rgba(255,228,0,.55)); border:1px solid rgba(255,228,0,.4); }
@@ -144,18 +147,17 @@ body.finish-mode { background:#0a0a0a; }
 <div class="ground-strip"></div>
 
 <!-- FINISH OVERLAY -->
-<div id="finish-overlay">
+<div id="finish-overlay" onclick="closeFinish()">
   <div class="finish-trophy">🏆</div>
   <div class="finish-title">FINISH!</div>
-  <div class="finish-sub" id="finish-grade-line">LEGENDARY PERFORMANCE</div>
+  <div class="finish-sub" id="finish-grade-line" style="text-align:center">LEGENDARY PERFORMANCE</div>
   <div class="finish-stats">
     <div class="finish-stat"><div class="finish-stat-val" id="fs-dist">0m</div><div class="finish-stat-lbl">DISTANCE</div></div>
     <div class="finish-stat"><div class="finish-stat-val" id="fs-top">0</div><div class="finish-stat-lbl">TOP km/h</div></div>
     <div class="finish-stat"><div class="finish-stat-val" id="fs-beat">0</div><div class="finish-stat-lbl">TRAINS BEAT</div></div>
   </div>
-  <button class="finish-close" onclick="closeFinish()">CLOSE</button>
+  
 </div>
-
 
   </div>
 </div>
@@ -213,7 +215,7 @@ body.finish-mode { background:#0a0a0a; }
     <div class="sp-track-card tc-you">
       <div class="sp-track-top">
         <span class="sp-track-name">🏃 YOU</span>
-        <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.45)" id="you-dist-chip">0 m</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.45)" id="you-dist-chip">0 m</span><button class="btn-collapse" onclick="toggleTrack(this)">▼</button></span>
       </div>
       <div class="sp-scene" id="sp-scene-you">
         <div class="sp-rail-bed"></div><div class="sp-ties"></div>
@@ -237,7 +239,7 @@ body.finish-mode { background:#0a0a0a; }
     <div class="sp-track-card tc-g">
       <div class="sp-track-top">
         <span class="sp-track-name">🟢 GREEN LINE · 13 km/h</span>
-        <span class="sp-gap-chip" id="sp-gap-g" style="background:rgba(0,0,0,.3);color:rgba(255,255,255,.7)">…</span>
+        <span style="display:flex;align-items:center;gap:6px"><span class="sp-gap-chip" id="sp-gap-g" style="background:rgba(0,0,0,.3);color:rgba(255,255,255,.7)">…</span><button class="btn-collapse" onclick="toggleTrack(this)">▼</button></span>
       </div>
       <div class="sp-scene" id="sp-scene-g">
         <div class="sp-rail-bed"></div><div class="sp-ties"></div>
@@ -252,7 +254,7 @@ body.finish-mode { background:#0a0a0a; }
     <div class="sp-track-card tc-r">
       <div class="sp-track-top">
         <span class="sp-track-name">🔴 RED LINE · 32 km/h</span>
-        <span class="sp-gap-chip" id="sp-gap-r" style="background:rgba(0,0,0,.3);color:rgba(255,255,255,.7)">…</span>
+        <span style="display:flex;align-items:center;gap:6px"><span class="sp-gap-chip" id="sp-gap-r" style="background:rgba(0,0,0,.3);color:rgba(255,255,255,.7)">…</span><button class="btn-collapse" onclick="toggleTrack(this)">▼</button></span>
       </div>
       <div class="sp-scene" id="sp-scene-r">
         <div class="sp-rail-bed"></div><div class="sp-ties"></div>
@@ -267,7 +269,7 @@ body.finish-mode { background:#0a0a0a; }
     <div class="sp-track-card tc-o">
       <div class="sp-track-top">
         <span class="sp-track-name">🟠 ORANGE LINE · 38 km/h</span>
-        <span class="sp-gap-chip" id="sp-gap-o" style="background:rgba(0,0,0,.3);color:rgba(255,255,255,.7)">…</span>
+        <span style="display:flex;align-items:center;gap:6px"><span class="sp-gap-chip" id="sp-gap-o" style="background:rgba(0,0,0,.3);color:rgba(255,255,255,.7)">…</span><button class="btn-collapse" onclick="toggleTrack(this)">▼</button></span>
       </div>
       <div class="sp-scene" id="sp-scene-o">
         <div class="sp-rail-bed"></div><div class="sp-ties"></div>
@@ -546,6 +548,12 @@ function updateUI(ms){
     const pc=document.querySelector('.spec-pr-card'),r=pc.getBoundingClientRect();
     spawnBurst(r.left+r.width/2,r.top+r.height/2,'#e879f9',22);
   }
+}
+
+
+function toggleTrack(btn){
+  const card = btn.closest('.sp-track-card');
+  card.classList.toggle('collapsed');
 }
 
 function setSpeed(ms){if(!isFinite(ms)||ms<0)return;curMs=ms;updateUI(ms);}
