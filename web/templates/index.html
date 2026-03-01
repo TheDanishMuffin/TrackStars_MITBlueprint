@@ -6,10 +6,22 @@
 </head>
 <body>
     <h1>Distance Reading</h1>
-    {% if distance is not none %}
-        <p>Current distance: {{ distance }} cm</p>
-    {% else %}
-        <p><em>No data available yet.</em></p>
-    {% endif %}
+    <p id="distance-value"><em>loading…</em></p>
+
+    <script>
+    // server‑sent events version for real‑time updates
+    const es = new EventSource('/stream');
+    es.onmessage = function(e) {
+        const el = document.getElementById('distance-value');
+        if (e.data === "null") {
+            el.innerHTML = '<em>No data available yet.</em>';
+        } else {
+            el.textContent = 'Current distance: ' + e.data + ' cm';
+        }
+    };
+    es.onerror = function() {
+        console.error('eventsource error');
+    };
+    </script>
 </body>
 </html>

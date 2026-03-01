@@ -1,16 +1,21 @@
 from flask import Flask, render_template, request
 import paho.mqtt.client as mqtt
 import threading
+import queue
+from flask import Response, stream_with_context
 
 app = Flask(__name__)
 
 # MQTT configuration (should match hardware/config.h)
-MQTT_BROKER = "10.29.153.191"
+MQTT_BROKER = "test.mosquitto.org"
 MQTT_PORT = 1883
 MQTT_TOPIC = "sensor/distance"
 
 # store the most recent reading
 latest_distance = None
+
+# simple list of queues for server‑sent events subscribers
+_sse_subscribers = []
 
 # MQTT callbacks
 def on_connect(client, userdata, flags, rc):
@@ -20,6 +25,10 @@ def on_message(client, userdata, msg):
     global latest_distance
     try:
         latest_distance = float(msg.payload.decode())
+        # notify any active SSE clients
+        text = str(latest_distance)
+        for q in list(_sse_subscribers):
+            q.put(text)
     except ValueError:
         pass
 
@@ -34,6 +43,28 @@ threading.Thread(target=mqtt_client.loop_forever, daemon=True).start()
 def index():
     # pass the latest MQTT value to the template
     return render_template('index.html', distance=latest_distance)
+
+@app.route('/distance')
+def get_distance():
+    """Return the most recent reading as JSON."""
+    return {"distance": latest_distance}
+
+
+@app.route('/stream')
+def stream():
+    """Server‑sent events stream of distance updates."""
+    def event_stream():
+        q = queue.Queue()
+        _sse_subscribers.append(q)
+        try:
+            while True:
+                data = q.get()
+                yield f"data: {data}\n\n"
+        except GeneratorExit:
+            _sse_subscribers.remove(q)
+    headers = {"Content-Type": "text/event-stream", "Cache-Control": "no-cache"}
+    return Response(stream_with_context(event_stream()), headers=headers)
+
 
 @app.route('/api/raw', methods=['POST'])
 def raw_data():

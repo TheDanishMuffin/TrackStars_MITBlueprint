@@ -1,6 +1,6 @@
-#define WIFI_SSID "MIT"
-#define WIFI_PASS "xwiI60/ehX"
+#define WIFI_SSID "A14 Hotspot"
+#define WIFI_PASS "testyt1234"
 
-#define MQTT_BROKER "10.29.153.191"
+#define MQTT_BROKER "test.mosquitto.org"
 #define MQTT_PORT 1883
 #define MQTT_TOPIC "sensor/distance"
