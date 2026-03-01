@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Star</title>
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 90%;
+      max-width: 1200px;
+      text-align: center;
+    }
+
+    .hero-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .race-button {
+      position: absolute;
+      bottom: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 16px 36px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      background-color: #22c55e;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .race-button:hover {
+      background-color: #16a34a;
+      transform: translateX(-50%) scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <!-- Landing SVG -->
+    <img src="landing-page (1).svg" 
+         alt="Landing Page Graphic" 
+         class="hero-svg">
+
+    <!-- Race Button -->
+    <button class="race-button" onclick="startRace()">
+      Race
+    </button>
+  </div>
+
+  <script>
+    function startRace() {
+      window.location.href = "index.html"; 
+      
+    }
+  </script>
+
+</body>
+</html>
