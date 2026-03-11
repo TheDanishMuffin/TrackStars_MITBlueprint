@@ -1,7 +1,7 @@
 # Track Stars 🏃‍♂️💨🚇
 **Winner: General Track 1st Place @ MIT Blueprint 2026**
 
-![Track Stars Project Banner]([image_8e3216.png](https://plume.hackmit.org/api/v3/projects/pr-NuMlydzUH3O6ZCO/image?t=1773272315105))
+![Banner](https://plume.hackmit.org/api/v3/projects/pr-NuMlydzUH3O6ZCO/image?t=1773272315105)
 
 ## 💡 Inspiration
 Ever been running late to class because the Red Line to Kendall is just too slow? We know you've thought to yourself, *"I could literally walk faster than this train."* Boston commuters joke constantly about racing and beating the T. So, we turned that frustration into a challenge: **what if your steps actually competed against MBTA line speeds in real time?** Instead of just complaining about delays, we built a way to outrun them.
